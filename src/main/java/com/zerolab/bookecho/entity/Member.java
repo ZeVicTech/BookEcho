@@ -24,12 +24,25 @@ public class Member {
     private String password;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)//CascadeType 확인 안바뀔수도 있음
+    private List<Session> sessions = new ArrayList<>();
+
+    public Session addSession(){
+        Session session = Session.builder()
+                        .member(this)
+                        .build();
+        sessions.add(session);
+
+        return session;
+    }
 
     @Builder
     public Member(String nickName, String loginId, String password) {

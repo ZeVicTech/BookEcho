@@ -17,6 +17,7 @@ public class ReviewResponseDto {
     private Long id;
     private String title;
     private String content;
+    private Integer starPoint;
     private LocalDateTime createDateTime;
 
     @JsonProperty(value="book")
@@ -29,12 +30,13 @@ public class ReviewResponseDto {
     private List<CommentResponseDto> commentResponseDto;
 
     @Builder
-    public ReviewResponseDto(Long id, String title, String content,
+    public ReviewResponseDto(Long id, String title, String content, Integer starPoint,
                              LocalDateTime createDateTime, BookResponseDto bookResponseDto,
                              MemberResponseDto memberResponseDto, List<CommentResponseDto> commentResponseDto) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.starPoint = starPoint;
         this.createDateTime = createDateTime;
         this.bookResponseDto = bookResponseDto;
         this.memberResponseDto = memberResponseDto;
@@ -51,6 +53,7 @@ public class ReviewResponseDto {
                 .id(review.getId())
                 .title(review.getTitle())
                 .content(review.getContent())
+                .starPoint(review.getStarPoint())
                 .createDateTime(review.getCreateDateTime())
                 .bookResponseDto(BookResponseDto.of(review.getBook()))
                 .memberResponseDto(MemberResponseDto.of(review.getMember()))

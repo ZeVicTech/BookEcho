@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ReviewCreateDto {
+public class ReviewEditDto {
 
     @NotNull
     private Long bookId;
@@ -20,7 +20,7 @@ public class ReviewCreateDto {
     private Integer starPoint;
 
     @Builder
-    public ReviewCreateDto(Long bookId, String title, String content, Integer starPoint) {
+    public ReviewEditDto(Long bookId, String title, String content, Integer starPoint) {
         this.bookId = bookId;
         this.title = title;
         this.content = content;

@@ -36,7 +36,7 @@ public class Review {
     private Book book;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
@@ -46,6 +46,13 @@ public class Review {
         this.starPoint = starPoint;
         this.createDateTime = createDateTime;
         this.member = member;
+        this.book = book;
+    }
+
+    public void edit(String title, String content, int starPoint, Book book) {
+        this.title = title;
+        this.content = content;
+        this.starPoint = starPoint;
         this.book = book;
     }
 }

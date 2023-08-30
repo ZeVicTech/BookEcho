@@ -239,3 +239,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+#BookEcho
+nodeenv-16

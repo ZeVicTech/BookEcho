@@ -3,17 +3,22 @@ package com.zerolab.bookecho.service;
 import com.zerolab.bookecho.entity.Book;
 import com.zerolab.bookecho.entity.Member;
 import com.zerolab.bookecho.entity.Review;
+import com.zerolab.bookecho.exception.ReviewNotFound;
+import com.zerolab.bookecho.exception.Unauthorized;
 import com.zerolab.bookecho.repository.BookRepository;
 import com.zerolab.bookecho.repository.MemberRepository;
 import com.zerolab.bookecho.repository.ReviewRepository;
 import com.zerolab.bookecho.request.ReviewCreateDto;
+import com.zerolab.bookecho.request.ReviewEditDto;
 import com.zerolab.bookecho.response.ReviewResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,51 +30,75 @@ public class ReviewService {
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
 
+    //리뷰 전체 조회
     public List<ReviewResponseDto> findAll(Pageable pageable){
         return reviewRepository.findAll(pageable).stream()
                 .map(ReviewResponseDto::of)
                 .collect(Collectors.toList());
     }
 
+    //리뷰 단건 조회
     public ReviewResponseDto findById(Long id){
         Review review = reviewRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(ReviewNotFound::new);
         return ReviewResponseDto.of(review);
     }
 
-    public Long save(ReviewCreateDto reviewCreateDto){
-        //임시 북 생성(책 가져오는 기능이 완성되면 삭제)
-        Book book = Book.builder()
-                .title("아메리칸 프로메테우스")
-                .author("카이 버드")
-                .publisher("사이언스 북스")
-                .pubdate("20230612")
-                .image("https://shopping-phinf.pstatic.net/main_4064133/40641337634.20230823071535.jpg")
-                .isbn("9791192908236")
-                .build();
+    //리뷰 저장
+    public Long save(Long sessionId, ReviewCreateDto reviewCreateDto){
 
-        bookRepository.save(book);
+        Member member = memberRepository.findById(sessionId)
+                .orElseThrow(Unauthorized::new);
 
-        //멤버 생성(회원가입, 로그인 기능이 완성되면 삭제)
-        Member member = Member.builder()
-                .nickName("헤이즈")
-                .loginId("로그인 아이디")
-                .password("패스워드")
-                .build();
+        Book book = bookRepository.findById(reviewCreateDto.getBookId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 책입니다."));
 
-        memberRepository.save(member);
 
         //리뷰 게시글 저장 로직
         Review review = Review.builder()
                 .title(reviewCreateDto.getTitle())
                 .content(reviewCreateDto.getContent())
-                .starPoint(5)
+                .starPoint(reviewCreateDto.getStarPoint())
+                .createDateTime(LocalDateTime.now())
                 .book(book) //임시로 집어넣음
-                .member(member) //임시로 집어넣음
+                .member(member)
                 .build();
 
         reviewRepository.save(review);
         return review.getId();
     }
+
+    //리뷰 수정
+    public ReviewResponseDto edit(Long sessionId,Long reviewId, ReviewEditDto reviewEditDto){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(ReviewNotFound::new);
+
+        //토큰 값 id와 일치하는 확인
+        if(!Objects.equals(review.getMember().getId(), sessionId)){
+            throw new Unauthorized();
+        }
+
+        //수정된 리뷰의 책이 있는지 조회
+        Book book = bookRepository.findById(reviewEditDto.getBookId())
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 책입니다."));
+
+        //게시글 수정(프론트엔드 쪽 요청에 따라 널이 들어올 시 기존에 있는 데이터를 집어 넣을 수 도 있음)
+        //ex) reviewEditDto.geTitle != null ? reviewEditDto.getTitle() : review.getTitle()
+        review.edit(
+                reviewEditDto.getTitle(),
+                reviewEditDto.getContent(),
+                reviewEditDto.getStarPoint(),
+                book
+        );
+        return ReviewResponseDto.of(review);
+    }
+
+    //리뷰 삭제
+    public void delete(Long reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(ReviewNotFound::new);
+        reviewRepository.delete(review);
+    }
+
 
 }

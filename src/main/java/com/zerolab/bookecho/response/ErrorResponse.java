@@ -1,5 +1,6 @@
 package com.zerolab.bookecho.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -16,12 +17,19 @@ import java.util.Map;
  */
 
 @Data
+// @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class ErrorResponse {
 
     private final String code;
     private final String message;
+    private final Map<String, String> validation;
 
-    private Map<String, String> validation = new HashMap<>();
+    @Builder
+    public ErrorResponse(String code, String message, Map<String, String> validation) {
+        this.code = code;
+        this.message = message;
+        this.validation = validation != null ? validation : new HashMap<>();
+    }
 
     public void addValidatoin(String fieldName, String errorMessage){
         this.validation.put(fieldName, errorMessage);
