@@ -24,11 +24,11 @@ const moveToReviewRead = () => {
     <li v-for="review in reviews" :key="review.id" @click="moveToReviewRead">
 
       <el-row :gutter="20" style="margin-left: 25rem">
-        <el-col span="1">
+        <el-col span="4">
             <el-image style="width: 250px; height: 250px" :fit="'scale-down'" src="https://shopping-phinf.pstatic.net/main_4064133/40641337634.20230823071535.jpg"></el-image>
         </el-col>
 
-        <el-col span="3" style="width: 400px">
+        <el-col span="12" style="width: 400px">
           <el-row>
             <div class="title">
               <router-link :to="{name:'read',params: {reviewId: review.id}}">

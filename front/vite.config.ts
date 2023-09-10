@@ -21,6 +21,10 @@ export default defineConfig({
         target: "http://localhost:8080",
         rewrite: (path:string) => path.replace(/^\/api/,"")
       },
+      "/naver": {
+        target: "https://openapi.naver.com/v1/search/book.json",
+        rewrite: (path:string) => path.replace(/^\/naver/,"")
+      },
     },
   },
 })
