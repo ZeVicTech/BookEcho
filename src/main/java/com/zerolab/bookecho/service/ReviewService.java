@@ -1,8 +1,8 @@
 package com.zerolab.bookecho.service;
 
-import com.zerolab.bookecho.entity.Book;
-import com.zerolab.bookecho.entity.Member;
-import com.zerolab.bookecho.entity.Review;
+import com.zerolab.bookecho.domain.Book;
+import com.zerolab.bookecho.domain.Member;
+import com.zerolab.bookecho.domain.Review;
 import com.zerolab.bookecho.exception.ReviewNotFound;
 import com.zerolab.bookecho.exception.Unauthorized;
 import com.zerolab.bookecho.repository.BookRepository;
@@ -41,18 +41,25 @@ public class ReviewService {
     public ReviewResponseDto findById(Long id){
         Review review = reviewRepository.findById(id)
                 .orElseThrow(ReviewNotFound::new);
+
         return ReviewResponseDto.of(review);
     }
 
     //리뷰 저장
     public Long save(Long sessionId, ReviewCreateDto reviewCreateDto){
-
         Member member = memberRepository.findById(sessionId)
                 .orElseThrow(Unauthorized::new);
 
-        Book book = bookRepository.findById(reviewCreateDto.getBookId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 책입니다."));
+        Book book = Book.builder()
+                .title(reviewCreateDto.getBook().getTitle())
+                .author(reviewCreateDto.getBook().getAuthor())
+                .publisher(reviewCreateDto.getBook().getAuthor())
+                .pubdate(reviewCreateDto.getBook().getPubdate())
+                .image(reviewCreateDto.getBook().getImage())
+                .isbn(reviewCreateDto.getBook().getIsbn())
+                .build();
 
+        bookRepository.save(book);
 
         //리뷰 게시글 저장 로직
         Review review = Review.builder()
@@ -60,11 +67,12 @@ public class ReviewService {
                 .content(reviewCreateDto.getContent())
                 .starPoint(reviewCreateDto.getStarPoint())
                 .createDateTime(LocalDateTime.now())
-                .book(book) //임시로 집어넣음
+                .book(book)
                 .member(member)
                 .build();
 
         reviewRepository.save(review);
+
         return review.getId();
     }
 
@@ -90,6 +98,7 @@ public class ReviewService {
                 reviewEditDto.getStarPoint(),
                 book
         );
+
         return ReviewResponseDto.of(review);
     }
 
@@ -97,6 +106,7 @@ public class ReviewService {
     public void delete(Long reviewId){
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFound::new);
+
         reviewRepository.delete(review);
     }
 

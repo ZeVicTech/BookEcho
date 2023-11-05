@@ -1,4 +1,4 @@
-package com.zerolab.bookecho.entity;
+package com.zerolab.bookecho.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

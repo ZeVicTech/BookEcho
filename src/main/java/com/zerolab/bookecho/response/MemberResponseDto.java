@@ -1,6 +1,6 @@
 package com.zerolab.bookecho.response;
 
-import com.zerolab.bookecho.entity.Member;
+import com.zerolab.bookecho.domain.Member;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -10,20 +10,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewCreateDto {
 
-    @NotNull
-    private Long bookId;
     @NotBlank
     private String title;
     @NotBlank
     private String content;
     @NotNull
     private Integer starPoint;
+    @NotNull
+    private BookDto book;
 
     @Builder
-    public ReviewCreateDto(Long bookId, String title, String content, Integer starPoint) {
-        this.bookId = bookId;
+    public ReviewCreateDto(String title, String content, Integer starPoint, BookDto bookDto) {
         this.title = title;
         this.content = content;
         this.starPoint = starPoint;
+        this.book = bookDto;
     }
 }

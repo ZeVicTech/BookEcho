@@ -1,4 +1,4 @@
-package com.zerolab.bookecho.entity;
+package com.zerolab.bookecho.domain;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QSession extends EntityPathBase<Session> {
 
-    private static final long serialVersionUID = 2007901013L;
+    private static final long serialVersionUID = -918969546L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

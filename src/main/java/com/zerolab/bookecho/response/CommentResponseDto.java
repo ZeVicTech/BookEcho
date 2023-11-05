@@ -1,6 +1,6 @@
 package com.zerolab.bookecho.response;
 
-import com.zerolab.bookecho.entity.Comment;
+import com.zerolab.bookecho.domain.Comment;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

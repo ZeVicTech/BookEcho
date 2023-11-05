@@ -12,7 +12,6 @@
 
 <style scoped>
 .content {
-  height: calc(100vh - 60px);
   margin: 0;
   padding: 0;
 }

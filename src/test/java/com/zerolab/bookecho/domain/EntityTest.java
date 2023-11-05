@@ -1,4 +1,4 @@
-package com.zerolab.bookecho.entity;
+package com.zerolab.bookecho.domain;
 
 import com.zerolab.bookecho.repository.MemberRepository;
 import jakarta.persistence.EntityManager;

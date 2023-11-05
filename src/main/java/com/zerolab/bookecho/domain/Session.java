@@ -1,4 +1,4 @@
-package com.zerolab.bookecho.entity;
+package com.zerolab.bookecho.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

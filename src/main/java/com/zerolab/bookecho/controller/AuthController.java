@@ -44,7 +44,6 @@ public class AuthController {
     @PostMapping("/auth/signup")
     public void signup(@RequestBody SignupDto signupDto){
         authService.signup(signupDto);
-
     }
 
 }

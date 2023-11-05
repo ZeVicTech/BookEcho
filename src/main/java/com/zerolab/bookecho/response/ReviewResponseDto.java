@@ -1,7 +1,7 @@
 package com.zerolab.bookecho.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zerolab.bookecho.entity.Review;
+import com.zerolab.bookecho.domain.Review;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

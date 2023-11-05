@@ -1,9 +1,9 @@
 package com.zerolab.bookecho.dummy;
 
-import com.zerolab.bookecho.entity.Book;
-import com.zerolab.bookecho.entity.Comment;
-import com.zerolab.bookecho.entity.Member;
-import com.zerolab.bookecho.entity.Review;
+import com.zerolab.bookecho.domain.Book;
+import com.zerolab.bookecho.domain.Comment;
+import com.zerolab.bookecho.domain.Member;
+import com.zerolab.bookecho.domain.Review;
 import com.zerolab.bookecho.repository.BookRepository;
 import com.zerolab.bookecho.repository.CommentRepository;
 import com.zerolab.bookecho.repository.MemberRepository;

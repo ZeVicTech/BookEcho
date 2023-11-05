@@ -5,35 +5,33 @@ import axios from "axios";
 import {useRouter} from "vue-router";
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 
-const isOpen = ref(false)
+let isOpen = ref(false)
+// 검색한 책 정보 저장 변수
 const books = ref([]);
-const query = ref();
-const start = ref(1)
-const display = ref(5)
-const selectedBook = ref({
-  title:"",
-  author:"",
-  publisher:"",
-  pubdate:"",
-  image:"",
-  isbn:""
-});
+const query = ref("")
+let start = 1
+const display = 5
+let total = 9999
 
 const review = ref({
   title:"",
   content:"",
   starPoint:0,
-  book:{},
+  book:{
+    title:"",
+    author:"",
+    publisher:"",
+    pubdate:"",
+    image:"",
+    isbn:""
+  },
 });
 
 const router = useRouter();
 
 const write = function() {
   axios.defaults.headers.common['Authorization'] = `${localStorage.getItem('user-token')}`;
-  axios.post("/api/review",{
-    bookId: 2,
-    starPoint: 3
-  })
+  axios.post("/api/review",review.value)
       .then(()=>{
         router.replace({name:"home"});
       });
@@ -42,7 +40,10 @@ const write = function() {
 const searchBook = function() {
   isOpen.value = true;
   //깃허브에 올릴땐 빼야함
-  axios.get(`/naver?query=${query.value}&display=${display.value}&start=${start.value}`).then((response) => {
+  axios.defaults.headers.common['X-Naver-Client-Id'] = "";
+  axios.defaults.headers.common['X-Naver-Client-Secret'] = ""
+  axios.get(`/naver?query=${query.value}&display=${display}&start=${start}`).then((response) => {
+    total = response.data.total
     books.value = []
     response.data.items.forEach((r : any) => {
       books.value.push(r);
@@ -51,92 +52,154 @@ const searchBook = function() {
   console.log(books)
 };
 
+// 책선택 함수
+const selectBook = function(book) {
+  console.log(review.value.book.title)
+
+  review.value.book.title = book.title;
+  review.value.book.author = book.author;
+  review.value.book.publisher = book.publisher;
+  review.value.book.pubdate = book.pubdate;
+  review.value.book.image = book.image;
+  review.value.book.isbn = book.isbn;
+
+  closeSearch()
+
+  console.log(review.value)
+};
+
+const closeSearch = function () {
+  isOpen.value = false
+  start = 1
+}
+
+// 책검색 다음 페이지 함수
+const nextPage = function () {
+  if(start+5 >= total)
+    return
+  start += 5
+  searchBook()
+}
+// 책검색 이전 페이지 함수
+const prevPage = function () {
+  if(start - 5 < 1)
+    return
+  start -= 5
+  searchBook()
+}
+
 </script>
 
 <template>
-
-  <div class="black-bag" v-if="isOpen" style="z-index: 9999;">
+<!--책 선택 모달 창-->
+  <div v-if="isOpen" class="black-bg">
     <div class="white-bg">
-      <h2>Select a Book</h2>
-      <ul>
-        <li v-for="(book, index) in books" :key="index">
-          <div>
-            <el-image src={{book.}}>
-            </el-image>
-          </div>
-          <div>
-            <p>책 제목: {{selectedBook.title}}</p>
-            <p>작가 이름: {{selectedBook.author}}</p>
-            <p>출판사: {{selectedBook.publisher}}</p>
-            <p>출판일: {{selectedBook.pubdate}}</p>
-          </div>
-          <button @click="selectBook(book)">Select</button>
-        </li>
-      </ul>
+      <div style="display: flex; justify-content: end">
+        <el-button type="primary" @click="isOpen=false">닫기</el-button>
+      </div>
+      <div style="display: flex; justify-content: center">
+        <h2>책을 선택해주세요</h2>
+      </div>
+      <div v-for="(book, index) in books" :key="index" class="book-info-container">
+        <div style="width: 150px; height: 150px">
+          <el-image :src=book.image fit="scale-down"></el-image>
+        </div>
+        <div class="ms-3" style="width: 300px">
+          <p>책 제목: {{book.title}}</p>
+          <p>작가 이름: {{book.author}}</p>
+          <p>출판사: {{book.publisher}}</p>
+          <p>출판일: {{book.pubdate}}</p>
+        </div>
+        <div class="ms-3">
+          <el-button type="primary" @click="selectBook(book)">책 선택</el-button>
+        </div>
+      </div>
+      <div class="mt-3" style="display: flex; justify-content: center">
+        <el-button @click="prevPage">이전 페이지</el-button>
+        <el-button @click="nextPage">다음 페이지</el-button>
+      </div>
     </div>
   </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="image">
-      <el-image style="align-content: center">
-        <template #error>
-          <div class="image-slot">
-            <el-icon><icon-picture /></el-icon>
-          </div>
-        </template>
-      </el-image>
+      <div>
+        <el-image class="image" fit="scale-down" style="align-content: center; width: 300px;height: 300px;" :src = review.book.image>
+          <template #error>
+            <div class="image-slot">
+              <el-icon><icon-picture /></el-icon>
+            </div>
+          </template>
+        </el-image>
+      </div>
+
+      <div style="width: 250px">
+        <p>책 제목: {{review.book.title}}</p>
+        <p>작가 이름: {{review.book.author}}</p>
+        <p>출판사: {{review.book.publisher}}</p>
+        <p>출판일: {{review.book.pubdate}}</p>
+        <el-rate v-model="review.starPoint" />
+      </div>
+
+      <div style="margin-left: 50px; display: flex; align-content: end">
+        <el-input v-model="query" placeholder="책 이름을 입력해주세요"></el-input>
+        <el-button class="ms-2" type="info" @click="searchBook">책 검색</el-button>
+      </div>
     </div>
 
-    <div style="width: 250px">
-      <p>책 제목: {{selectedBook.title}}</p>
-      <p>작가 이름: {{selectedBook.author}}</p>
-      <p>출판사: {{selectedBook.publisher}}</p>
-      <p>출판일: {{selectedBook.pubdate}}</p>
-      <el-rate v-model="review.starPoint" />
+    <div class="mt-4">
+      <el-input v-model="review.title" placeholder="제목을 입력해주세요"/>
     </div>
 
-    <div style="margin-left: 50px; display: flex; align-content: end">
-      <el-input v-model="query" placeholder="책 이름을 입력해주세요"></el-input>
-      <el-button class="ms-2" type="info" @click="searchBook">책 검색</el-button>
+    <div class="mt-2">
+      <el-input v-model="review.content" type="textarea" rows="15"></el-input>
     </div>
 
-  </div>
-
-
-<!--  <div class="mt-2">-->
-<!--  <el-input v-model="" placeholder="제목을 입력해주세요"/>-->
-<!--  </div>-->
-
-<!--  <div class="mt-2">-->
-<!--    <el-input v-model="" type="textarea" rows="15"></el-input>-->
-<!--  </div>-->
-
-  <div class="mt-2">
-    <div class="d-flex justify-content-end">
-      <el-button type="primary" @click="write">글 작성완료</el-button>
+    <div class="mt-2">
+      <div class="d-flex justify-content-end">
+        <el-button type="primary" @click="write">글 작성완료</el-button>
+      </div>
     </div>
-  </div>
+
 </template>
 
 <style scoped>
+.book-container {
+  display: flex;
+  align-items: center;
+  height: 300px;
+}
 
-.black-bag {
+.black-bg {
+  z-index: 9999;
   width:100%; height:100%;
   background: rgba(0,0,0,0.5);
   position: fixed;
+
+  display:flex; /* Added */
+  align-items:center; /* Added */
+  justify-content:center; /* Added */
 }
 .white-bg{
-  width: 50%; height: 50%;
+  width: 70%;height: 70%; /* height 값을 auto로 변경 */
+  border-radius: 8px;
   background: white;
-  border-right: 8px;
   padding: 20px;
 
-  position: absolute;
-  top:50%;
-  left:50%;
-  transform : translate(-50%,-50%);
+  overflow: auto;
 }
+
+.book-info-container { /* New style for each book info container */
+  height: 300px;
+  display:flex ;
+  flex-direction :row ;
+  justify-content:center ;
+  align-items:center ;
+  margin: auto;
+  width:60%;
+  border-bottom :1px solid black ;
+}
+
  .container {
    display: flex;
    align-items: center;
@@ -149,8 +212,7 @@ const searchBook = function() {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--el-fill-color-light);
-  color: var(--el-text-color-secondary);
   font-size: 30px;
+  /*margin-bottom: 50px;*/
 }
 </style>

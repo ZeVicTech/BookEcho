@@ -1,7 +1,7 @@
 package com.zerolab.bookecho.service;
 
 import com.zerolab.bookecho.crypto.PasswordEncoder;
-import com.zerolab.bookecho.entity.Member;
+import com.zerolab.bookecho.domain.Member;
 import com.zerolab.bookecho.exception.AlreadyExistsLoginIdException;
 import com.zerolab.bookecho.exception.InvalidLoginformation;
 import com.zerolab.bookecho.repository.MemberRepository;
