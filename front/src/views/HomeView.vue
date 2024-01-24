@@ -7,6 +7,7 @@ const reviews = ref([]);
 
 // 리뷰 전체 조회 요청
 axios.get("/api/review?page=1&sort=createDateTime,desc").then((response) => {
+  reviews.value = []
   response.data.forEach((r : any) => {
     reviews.value.push(r);
   });
@@ -25,7 +26,7 @@ const moveToReviewRead = () => {
 
       <el-row :gutter="20" style="margin-left: 25rem">
         <el-col span="4">
-            <el-image style="width: 250px; height: 250px" :fit="'scale-down'" src="https://shopping-phinf.pstatic.net/main_4064133/40641337634.20230823071535.jpg"></el-image>
+            <el-image style="width: 250px; height: 250px;"  fit="scale-down" :src="review.book.image"></el-image>
         </el-col>
 
         <el-col span="12" style="width: 400px">

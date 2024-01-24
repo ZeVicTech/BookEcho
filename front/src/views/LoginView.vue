@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import axios from "axios";
 import {useRouter} from "vue-router";
+import { userStore } from "@/stores/userStore";
 
 const router = useRouter();
 
@@ -12,6 +13,10 @@ const form = ref({
 
 const login = () => {
     axios.post("/api/auth/login",form.value).then((response)=>{
+      userStore.nickName = response.data['nickName']
+      userStore.accessToken = response.data['accessToken']
+      //TODO: 새로고침할때 다시 연결해줘야 되는 정보를 로컬스토리지에 담아놨음
+      localStorage.setItem('user-nickName', response.data['nickName'])
       localStorage.setItem('user-token', response.data['accessToken']);
       router.replace({name:"home"});
     })

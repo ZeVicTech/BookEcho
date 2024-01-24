@@ -11,10 +11,11 @@ const form = ref({
   password: ''
 });
 
-const signup = () => {
-    axios.post("/api/auth/signup",form.value).then(()=>{
+const signup = function () {
+    axios.post("/api/auth/signup",form.value)
+        .then(()=>{
           router.replace({name:"home"});
-    })
+        });
 };
 </script>
 
@@ -33,7 +34,7 @@ const signup = () => {
     </el-form-item>
 
     <div style="margin-left: 110px">
-      <el-button type='primary' @click='signup()'>회원가입</el-button>
+      <el-button type='primary' @click="signup">회원가입</el-button>
     </div>
   </el-form>
 </template>
