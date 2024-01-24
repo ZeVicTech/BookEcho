@@ -3,13 +3,14 @@ package com.zerolab.bookecho.service;
 import com.zerolab.bookecho.domain.Book;
 import com.zerolab.bookecho.domain.Member;
 import com.zerolab.bookecho.domain.Review;
+import com.zerolab.bookecho.exception.BookNotFound;
 import com.zerolab.bookecho.exception.ReviewNotFound;
 import com.zerolab.bookecho.exception.Unauthorized;
 import com.zerolab.bookecho.repository.BookRepository;
 import com.zerolab.bookecho.repository.MemberRepository;
 import com.zerolab.bookecho.repository.ReviewRepository;
-import com.zerolab.bookecho.request.ReviewCreateDto;
-import com.zerolab.bookecho.request.ReviewEditDto;
+import com.zerolab.bookecho.request.ReviewCreate;
+import com.zerolab.bookecho.request.ReviewEdit;
 import com.zerolab.bookecho.response.ReviewResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -46,26 +47,28 @@ public class ReviewService {
     }
 
     //리뷰 저장
-    public Long save(Long sessionId, ReviewCreateDto reviewCreateDto){
+    //TODO: sessionId보다는 memberId라고 변수명을 만드는게 좋을듯
+    public Long save(Long sessionId, ReviewCreate reviewCreate){
         Member member = memberRepository.findById(sessionId)
                 .orElseThrow(Unauthorized::new);
 
+        //책 정보 저장 로직
         Book book = Book.builder()
-                .title(reviewCreateDto.getBook().getTitle())
-                .author(reviewCreateDto.getBook().getAuthor())
-                .publisher(reviewCreateDto.getBook().getAuthor())
-                .pubdate(reviewCreateDto.getBook().getPubdate())
-                .image(reviewCreateDto.getBook().getImage())
-                .isbn(reviewCreateDto.getBook().getIsbn())
+                .title(reviewCreate.getBook().getTitle())
+                .author(reviewCreate.getBook().getAuthor())
+                .publisher(reviewCreate.getBook().getAuthor())
+                .pubdate(reviewCreate.getBook().getPubdate())
+                .image(reviewCreate.getBook().getImage())
+                .isbn(reviewCreate.getBook().getIsbn())
                 .build();
 
         bookRepository.save(book);
 
         //리뷰 게시글 저장 로직
         Review review = Review.builder()
-                .title(reviewCreateDto.getTitle())
-                .content(reviewCreateDto.getContent())
-                .starPoint(reviewCreateDto.getStarPoint())
+                .title(reviewCreate.getTitle())
+                .content(reviewCreate.getContent())
+                .starPoint(reviewCreate.getStarPoint())
                 .createDateTime(LocalDateTime.now())
                 .book(book)
                 .member(member)
@@ -77,9 +80,14 @@ public class ReviewService {
     }
 
     //리뷰 수정
-    public ReviewResponseDto edit(Long sessionId,Long reviewId, ReviewEditDto reviewEditDto){
+    public ReviewResponseDto edit(Long sessionId,Long reviewId, ReviewEdit reviewEdit){
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFound::new);
+
+        Book book = bookRepository.findById(review.getBook().getId())
+                .orElseThrow(BookNotFound::new);
+
+
 
         //토큰 값 id와 일치하는 확인
         if(!Objects.equals(review.getMember().getId(), sessionId)){
@@ -87,16 +95,17 @@ public class ReviewService {
         }
 
         //수정된 리뷰의 책이 있는지 조회
-        Book book = bookRepository.findById(reviewEditDto.getBookId())
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 책입니다."));
+//        Book book = bookRepository.findById(reviewEdit.getBookId())
+//                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 책입니다."));
 
         //게시글 수정(프론트엔드 쪽 요청에 따라 널이 들어올 시 기존에 있는 데이터를 집어 넣을 수 도 있음)
         //ex) reviewEditDto.geTitle != null ? reviewEditDto.getTitle() : review.getTitle()
+
         review.edit(
-                reviewEditDto.getTitle(),
-                reviewEditDto.getContent(),
-                reviewEditDto.getStarPoint(),
-                book
+                reviewEdit.getTitle(),
+                reviewEdit.getContent(),
+                reviewEdit.getStarPoint(),
+                reviewEdit.getBook()
         );
 
         return ReviewResponseDto.of(review);

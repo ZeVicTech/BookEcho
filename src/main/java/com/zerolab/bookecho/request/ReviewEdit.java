@@ -1,5 +1,6 @@
 package com.zerolab.bookecho.request;
 
+import com.zerolab.bookecho.domain.Book;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -8,10 +9,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ReviewEditDto {
+public class ReviewEdit {
 
     @NotNull
-    private Long bookId;
+    private Book book;
     @NotBlank
     private String title;
     @NotBlank
@@ -20,8 +21,8 @@ public class ReviewEditDto {
     private Integer starPoint;
 
     @Builder
-    public ReviewEditDto(Long bookId, String title, String content, Integer starPoint) {
-        this.bookId = bookId;
+    public ReviewEdit(Book book, String title, String content, Integer starPoint) {
+        this.book = book;
         this.title = title;
         this.content = content;
         this.starPoint = starPoint;

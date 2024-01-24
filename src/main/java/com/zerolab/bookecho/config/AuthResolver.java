@@ -33,13 +33,17 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
+        //헤더의 Authorization에 있는 jws값 추출
         String jws = webRequest.getHeader("Authorization");
+        //jws가 없을 경우 권한 관련 예외처리
         if(jws == null || jws.equals("")){
             throw new Unauthorized();
         }
 
+        //복호화 키 할당
         byte[] decodedKey = appConfig.getJwtkey();
 
+        //jws를 복호화해서 memberId 추출
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(decodedKey)
@@ -51,7 +55,5 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         } catch (JwtException e){
             throw new Unauthorized();
         }
-
-        //return new UserSession(session.getMember().getId());
     }
 }

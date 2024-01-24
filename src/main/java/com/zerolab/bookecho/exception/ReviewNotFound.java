@@ -12,5 +12,4 @@ public class ReviewNotFound extends BookEchoException {
     public int getStatusCode() {
         return 404;
     }
-
 }

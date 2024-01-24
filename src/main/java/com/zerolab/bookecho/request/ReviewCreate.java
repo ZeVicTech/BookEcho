@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ReviewCreateDto {
+public class ReviewCreate {
 
     @NotBlank
     private String title;
@@ -20,7 +20,7 @@ public class ReviewCreateDto {
     private BookDto book;
 
     @Builder
-    public ReviewCreateDto(String title, String content, Integer starPoint, BookDto bookDto) {
+    public ReviewCreate(String title, String content, Integer starPoint, BookDto bookDto) {
         this.title = title;
         this.content = content;
         this.starPoint = starPoint;

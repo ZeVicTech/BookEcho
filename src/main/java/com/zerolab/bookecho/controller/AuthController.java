@@ -1,10 +1,11 @@
 package com.zerolab.bookecho.controller;
 
 import com.zerolab.bookecho.config.AppConfig;
-import com.zerolab.bookecho.request.LoginDto;
-import com.zerolab.bookecho.request.SignupDto;
+import com.zerolab.bookecho.request.Login;
+import com.zerolab.bookecho.request.Signup;
 import com.zerolab.bookecho.response.SessionResponse;
 import com.zerolab.bookecho.service.AuthService;
+import com.zerolab.bookecho.service.MemberService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,17 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AuthController {
 
-    //서비스 게층에서 해결할지 레포지토리에서 해결할지 고민중
     private final AuthService authService;
+    private final MemberService memberService;
     private final AppConfig appConfig;
 
+    //로그인
     @PostMapping("/auth/login")
-    public SessionResponse login(@RequestBody LoginDto loginDto){
+    public SessionResponse login(@RequestBody Login login){
 
-        Long memberId = authService.signin(loginDto);
+        //로그인 했을 때 닉네임과 jws키 반환
+        Long memberId = authService.signin(login);
+        String nickName = memberService.findNickNameById(memberId);
 
         SecretKey key = Keys.hmacShaKeyFor(appConfig.getJwtkey());
 
@@ -38,12 +42,13 @@ public class AuthController {
                 .signWith(key)
                 .compact();
 
-        return new SessionResponse(jws);
+        return new SessionResponse(nickName,jws);
     }
 
+    //회원가입
     @PostMapping("/auth/signup")
-    public void signup(@RequestBody SignupDto signupDto){
-        authService.signup(signupDto);
+    public void signup(@RequestBody Signup signup){
+        authService.signup(signup);
     }
 
 }

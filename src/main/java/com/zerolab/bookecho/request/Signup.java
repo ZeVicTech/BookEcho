@@ -3,7 +3,7 @@ package com.zerolab.bookecho.request;
 import lombok.Data;
 
 @Data
-public class SignupDto {
+public class Signup {
 
     private String nickName;
     private String loginId;

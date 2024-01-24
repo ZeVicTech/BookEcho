@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SessionResponse {
 
+    private final String nickName;
     private final String accessToken;
-
 }

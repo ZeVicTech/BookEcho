@@ -1,8 +1,8 @@
 package com.zerolab.bookecho.controller;
 
 import com.zerolab.bookecho.config.data.UserSession;
-import com.zerolab.bookecho.request.ReviewCreateDto;
-import com.zerolab.bookecho.request.ReviewEditDto;
+import com.zerolab.bookecho.request.ReviewCreate;
+import com.zerolab.bookecho.request.ReviewEdit;
 import com.zerolab.bookecho.response.ReviewResponseDto;
 import com.zerolab.bookecho.service.ReviewService;
 import jakarta.validation.Valid;
@@ -29,8 +29,8 @@ public class ReviewController {
 
     //리뷰 게시글 저장
     @PostMapping("/review")
-    public Long saveReview(UserSession userSession, @RequestBody @Valid ReviewCreateDto reviewCreateDto){
-        return reviewService.save(userSession.getId(), reviewCreateDto);
+    public Long saveReview(UserSession userSession, @RequestBody @Valid ReviewCreate reviewCreate){
+        return reviewService.save(userSession.getId(), reviewCreate);
     }
 
     //리뷰 게시글 전체 조회
@@ -47,8 +47,8 @@ public class ReviewController {
 
     //리뷰 게시글 수정
     @PatchMapping("/review/{reviewId}")
-    public ReviewResponseDto editReview(UserSession userSession, @PathVariable Long reviewId, @RequestBody @Valid ReviewEditDto reviewEditDto){
-        return reviewService.edit(userSession.getId(), reviewId, reviewEditDto);
+    public ReviewResponseDto editReview(UserSession userSession, @PathVariable Long reviewId, @RequestBody @Valid ReviewEdit reviewEdit){
+        return reviewService.edit(userSession.getId(), reviewId, reviewEdit);
     }
 
     //리뷰 게시글 삭제
