@@ -37,7 +37,7 @@ const review = ref({
   },
 });
 
-axios.defaults.headers.common['Authorization'] = `${localStorage.getItem('user-token')}`;
+axios.defaults.headers.common['Authorization'] = `${localStorage.getItem('user-accessToken')}`;
 
 // 기존에 작성되어 있던 것을 가져옴
 axios.get(`/api/review/${props.reviewId}`).then((response) => {

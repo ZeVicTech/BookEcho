@@ -17,7 +17,7 @@ const login = () => {
       userStore.accessToken = response.data['accessToken']
       //TODO: 새로고침할때 다시 연결해줘야 되는 정보를 로컬스토리지에 담아놨음
       localStorage.setItem('user-nickName', response.data['nickName'])
-      localStorage.setItem('user-token', response.data['accessToken']);
+      localStorage.setItem('user-accessToken', response.data['accessToken']);
       router.replace({name:"home"});
     })
 };

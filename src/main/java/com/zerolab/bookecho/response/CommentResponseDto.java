@@ -1,5 +1,6 @@
 package com.zerolab.bookecho.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zerolab.bookecho.domain.Comment;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class CommentResponseDto {
     private Long id;
     private String content;
     private LocalDateTime createDateTime;
+    @JsonProperty(value="member")
     private MemberResponseDto memberResponseDto;
 
     @Builder
