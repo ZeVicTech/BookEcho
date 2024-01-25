@@ -1,19 +1,45 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
 import axios from "axios";
 import router from "@/router";
 
 const reviews = ref([]);
+let pageNo = 1
+let isLastPage = false
+// let totalPages = 9999
 
 // 리뷰 전체 조회 요청
-axios.get("/api/review?page=1&sort=createDateTime,desc").then((response) => {
-  reviews.value = []
-  response.data.forEach((r : any) => {
-    reviews.value.push(r);
+const fetchData = () =>{
+  axios.get(`/api/review?page=${pageNo}&sort=createDateTime,desc`).then((response) => {
+    reviews.value = response.data.review;
+    console.log(response.data.review)
+    isLastPage = response.data.last;
+    // response.data.forEach((r : any) => {
+    //   reviews.value.push(r);
+    // });
   });
+}
+
+onMounted(()=>{
+  fetchData();
 });
 
-//
+const nextPage = function () {
+  if(isLastPage)
+    return;
+  pageNo+=1;
+  fetchData();
+}
+// 책검색 이전 페이지 함수
+const prevPage = function () {
+  if(pageNo==1)
+    return;
+  pageNo-=1;
+  fetchData();
+}
+
+
+//리뷰 디테일 화면으로 이동
 const moveToReviewRead = () => {
   router.push({name:"read"})
 }
@@ -62,6 +88,11 @@ const moveToReviewRead = () => {
 
     </li>
   </ul>
+  <div class="mt-3 mb-5" style="display: flex; justify-content: center">
+    <el-button @click="prevPage">이전 페이지</el-button>
+    <span class="ms-3 me-3 mt-2">{{pageNo}}</span>
+    <el-button @click="nextPage">다음 페이지</el-button>
+  </div>
 </template>
 
 <style scoped lang="scss">

@@ -32,6 +32,7 @@ const review = ref({
 const router = useRouter();
 
 const write = function() {
+
   axios.defaults.headers.common['Authorization'] = `${localStorage.getItem('user-accessToken')}`;
   axios.post("/api/review",review.value)
       .then(()=>{
