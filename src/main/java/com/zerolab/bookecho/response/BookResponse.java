@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class BookResponseDto {
+public class BookResponse {
     private String title;
     private String author;
     private String pubdate;
@@ -16,7 +16,7 @@ public class BookResponseDto {
     private String isbn;
 
     @Builder
-    public BookResponseDto(String title, String author, String pubdate, String publisher, String image, String isbn) {
+    public BookResponse(String title, String author, String pubdate, String publisher, String image, String isbn) {
         this.title = title;
         this.author = author;
         this.pubdate = pubdate;
@@ -25,8 +25,8 @@ public class BookResponseDto {
         this.isbn = isbn;
     }
 
-    public static BookResponseDto of(Book book){
-        return BookResponseDto.builder()
+    public static BookResponse of(Book book){
+        return BookResponse.builder()
                 .title(book.getTitle())
                 .author(book.getAuthor())
                 .pubdate(book.getPubdate())

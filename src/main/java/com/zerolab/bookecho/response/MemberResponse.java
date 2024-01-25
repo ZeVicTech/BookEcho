@@ -7,19 +7,19 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class MemberResponseDto {
+public class MemberResponse {
     private Long id;
     private String nickName;
 
     @Builder
-    public MemberResponseDto(Long id, String nickName) {
+    public MemberResponse(Long id, String nickName) {
         this.id = id;
         this.nickName = nickName;
     }
 
-    public static MemberResponseDto of(Member member){
+    public static MemberResponse of(Member member){
 
-        return MemberResponseDto.builder()
+        return MemberResponse.builder()
                 .id(member.getId())
                 .nickName(member.getNickName())
                 .build();

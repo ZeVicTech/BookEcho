@@ -10,9 +10,12 @@ import com.zerolab.bookecho.repository.MemberRepository;
 import com.zerolab.bookecho.repository.ReviewRepository;
 import com.zerolab.bookecho.request.ReviewCreate;
 import com.zerolab.bookecho.request.ReviewEdit;
-import com.zerolab.bookecho.response.ReviewResponseDto;
+import com.zerolab.bookecho.response.ReviewDetailResponse;
+import com.zerolab.bookecho.response.ReviewListPageResponse;
+import com.zerolab.bookecho.response.ReviewResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +34,30 @@ public class ReviewService {
     private final MemberRepository memberRepository;
 
     //리뷰 전체 조회
-    public List<ReviewResponseDto> findAll(Pageable pageable){
-        return reviewRepository.findAll(pageable).stream()
-                .map(ReviewResponseDto::of)
+    public ReviewListPageResponse findAll(Pageable pageable){
+
+        Page<Review> reviewPage = reviewRepository.findAll(pageable);
+
+        List<ReviewResponse> reviewResponses = reviewPage.getContent().stream()
+                .map(ReviewResponse::of)
                 .collect(Collectors.toList());
+
+        return ReviewListPageResponse.builder()
+                .review(reviewResponses)
+                .pageNo(pageable.getPageNumber())
+                .pageSize(pageable.getPageSize())
+                .totalElements(reviewPage.getTotalElements())
+                .totalPages(reviewPage.getTotalPages())
+                .last(reviewPage.isLast())
+                .build();
     }
 
     //리뷰 단건 조회
-    public ReviewResponseDto findById(Long id){
+    public ReviewDetailResponse findById(Long id){
         Review review = reviewRepository.findById(id)
                 .orElseThrow(ReviewNotFound::new);
 
-        return ReviewResponseDto.of(review);
+        return ReviewDetailResponse.of(review);
     }
 
     //리뷰 저장
@@ -78,7 +93,7 @@ public class ReviewService {
     }
 
     //리뷰 수정
-    public ReviewResponseDto edit(Long memberId,Long reviewId, ReviewEdit reviewEdit){
+    public ReviewDetailResponse edit(Long memberId, Long reviewId, ReviewEdit reviewEdit){
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFound::new);
@@ -116,7 +131,7 @@ public class ReviewService {
         //게시글 수정(프론트엔드 쪽 요청에 따라 널이 들어올 시 기존에 있는 데이터를 집어 넣을 수 도 있음)
         //ex) reviewEditDto.geTitle != null ? reviewEditDto.getTitle() : review.getTitle()
 
-        return ReviewResponseDto.of(review);
+        return ReviewDetailResponse.of(review);
     }
 
     //리뷰 삭제

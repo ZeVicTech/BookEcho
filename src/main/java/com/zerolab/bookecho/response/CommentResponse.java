@@ -10,28 +10,28 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class CommentResponseDto {
+public class CommentResponse {
 
     private Long id;
     private String content;
     private LocalDateTime createDateTime;
     @JsonProperty(value="member")
-    private MemberResponseDto memberResponseDto;
+    private MemberResponse memberResponse;
 
     @Builder
-    public CommentResponseDto(Long id, String content, LocalDateTime createDateTime, MemberResponseDto memberResponseDto) {
+    public CommentResponse(Long id, String content, LocalDateTime createDateTime, MemberResponse memberResponse) {
         this.id = id;
         this.content = content;
         this.createDateTime = createDateTime;
-        this.memberResponseDto = memberResponseDto;
+        this.memberResponse = memberResponse;
     }
 
-    public static CommentResponseDto of(Comment comment){
-        return CommentResponseDto.builder()
+    public static CommentResponse of(Comment comment){
+        return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .createDateTime(comment.getCreateDateTime())
-                .memberResponseDto(MemberResponseDto.of(comment.getMember()))
+                .memberResponse(MemberResponse.of(comment.getMember()))
                 .build();
     }
 }
