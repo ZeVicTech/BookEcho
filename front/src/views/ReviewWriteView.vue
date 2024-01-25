@@ -150,18 +150,19 @@ const prevPage = function () {
       <el-button class="ms-2" type="info" @click="searchBook">책 검색</el-button>
     </div>
   </div>
+  <div class="m-lg-5">
+    <div class="mt-4">
+      <el-input v-model="review.title" placeholder="제목을 입력해주세요"/>
+    </div>
 
-  <div class="mt-4">
-    <el-input v-model="review.title" placeholder="제목을 입력해주세요"/>
-  </div>
+    <div class="mt-2">
+      <el-input v-model="review.content" type="textarea" rows="15"></el-input>
+    </div>
 
-  <div class="mt-2">
-    <el-input v-model="review.content" type="textarea" rows="15"></el-input>
-  </div>
-
-  <div class="mt-2">
-    <div class="d-flex justify-content-end">
-      <el-button type="primary" @click="write">글 작성완료</el-button>
+    <div class="mt-2">
+      <div class="d-flex justify-content-end">
+        <el-button type="primary" @click="write">글 작성완료</el-button>
+      </div>
     </div>
   </div>
 

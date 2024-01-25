@@ -34,6 +34,12 @@ const moveToEdit = () => {
   router.push({name:"edit", params: {reviewId: props.reviewId}})
 }
 
+const deleteReview = () => {
+  axios.delete(`/api/review/${props.reviewId}`).then(() => {
+    router.replace({name: 'home'})
+  });
+}
+
 onMounted(()=>{
   axios.get(`/api/review/${props.reviewId}`).then((response) => {
     review.value = response.data
@@ -76,6 +82,7 @@ onMounted(()=>{
 
     <div class="mt-3 d-flex justify-content-end">
       <el-button type="warning" @click="moveToEdit">수정</el-button>
+      <el-button type="danger" @click="deleteReview">삭제</el-button>
     </div>
   </div>
 </template>
