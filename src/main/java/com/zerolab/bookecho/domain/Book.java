@@ -36,4 +36,17 @@ public class Book {
         this.image = image;
         this.isbn = isbn;
     }
+
+    public void edit(Book book){
+        this.title = book.title;
+        this.author = book.getAuthor();
+        this.pubdate = book.getPubdate();
+        this.publisher = book.getPublisher();
+        this.image = book.getImage();
+        this.isbn = book.isbn;
+    }
+
+    public void editImage(String image){
+        this.image = image;
+    }
 }

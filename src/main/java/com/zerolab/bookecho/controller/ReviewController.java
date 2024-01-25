@@ -53,7 +53,7 @@ public class ReviewController {
 
     //리뷰 게시글 삭제
     @DeleteMapping("/review/{reviewId}")
-    public void deleteReview(@PathVariable Long reviewId){
-        reviewService.delete(reviewId);
+    public void deleteReview(UserSession userSession, @PathVariable Long reviewId){
+        reviewService.delete(userSession.getId(), reviewId);
     }
 }

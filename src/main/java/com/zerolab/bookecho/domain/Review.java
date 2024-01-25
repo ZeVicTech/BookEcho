@@ -40,7 +40,7 @@ public class Review {
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Review(String title, String content, int starPoint, LocalDateTime createDateTime, Member member, Book book) {
+    public Review(String title, String content, Integer starPoint, LocalDateTime createDateTime, Member member, Book book) {
         this.title = title;
         this.content = content;
         this.starPoint = starPoint;
@@ -49,10 +49,14 @@ public class Review {
         this.book = book;
     }
 
-    public void edit(String title, String content, int starPoint, Book book) {
+    //함수명
+    public void editDetail(String title, String content, Integer starPoint) {
         this.title = title;
         this.content = content;
         this.starPoint = starPoint;
+    }
+
+    public void editBook(Book book){
         this.book = book;
     }
 }
