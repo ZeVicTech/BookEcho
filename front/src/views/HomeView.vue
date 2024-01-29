@@ -3,7 +3,33 @@ import {ref, onMounted} from "vue";
 import axios from "axios";
 import router from "@/router";
 
-const reviews = ref([]);
+type Book = {
+  title: string;
+  author: string;
+  pubdate: string;
+  publisher: string;
+  image: string;
+  isbn: string;
+};
+
+type Member = {
+  id: number;
+  nickName: string;
+};
+
+type Review = {
+  id: number;
+  title: string;
+  content: string;
+  starPoint: number;
+  createDateTime: string;
+  book: Book;
+  member: Member;
+};
+
+const reviews = ref<Review[]>([]);
+const isLoading = ref(true);
+
 let pageNo = 1
 let isLastPage = false
 // let totalPages = 9999
@@ -11,16 +37,16 @@ let isLastPage = false
 // 리뷰 전체 조회 요청
 const fetchData = () =>{
   axios.get(`/api/review?page=${pageNo}&sort=createDateTime,desc`).then((response) => {
+    isLoading.value = true;
     reviews.value = response.data.review;
     console.log(response.data.review)
     isLastPage = response.data.last;
-    // response.data.forEach((r : any) => {
-    //   reviews.value.push(r);
-    // });
+    isLoading.value = false;
   });
 }
 
 onMounted(()=>{
+  console.log(import.meta.env)
   fetchData();
 });
 
@@ -47,47 +73,42 @@ const moveToReviewRead = () => {
 </script>
 
 <template>
-  <ul>
-    <li v-for="review in reviews" :key="review.id" @click="moveToReviewRead">
-
-      <el-row :gutter="20" style="margin-left: 25rem">
-        <el-col span="4">
+  <div v-if="isLoading">Loading...</div>
+  <div v-else>
+    <ul class="">
+      <li v-for="review in reviews" :key="review.id" @click="moveToReviewRead">
+        <div class="d-flex justify-content-center align-items-center">
+          <div>
             <el-image style="width: 250px; height: 250px;"  fit="scale-down" :src="review.book.image"></el-image>
-        </el-col>
-
-        <el-col span="12" style="width: 400px">
-          <el-row>
+          </div>
+          <div class="flex align-self-start" style="width: 500px;">
             <div class="title">
               <router-link :to="{name:'read',params: {reviewId: review.id}}">
                 {{review.title}}
               </router-link>
             </div>
-          </el-row>
-
-          <el-row>
-            <el-rate
-                v-model="review.starPoint"
-                disabled
-                text-color="#ff9900"
-            />
-          </el-row>
-
-          <el-row>
-            <el-text class="text-ellipsis">{{review.content}}</el-text>
-          </el-row>
-
-          <el-row>
-            <div class="sub d-flex">
-              <div>{{review.member.nickName}}</div>
-              <div class="create-date">{{review.createDateTime.substring(0,10)}}</div>
+            <div>
+              <el-rate
+                  v-model="review.starPoint"
+                  disabled
+                  text-color="#ff9900"
+              />
             </div>
-          </el-row>
-        </el-col>
-      </el-row>
+            <div>
+              <el-text class="text-ellipsis">{{review.content}}</el-text>
+            </div>
+            <div>
+              <div class="sub d-flex">
+                <div>{{review.member.nickName}}</div>
+                <div class="create-date">{{review.createDateTime.substring(0,10)}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
 
-
-    </li>
-  </ul>
   <div class="mt-3 mb-5" style="display: flex; justify-content: center">
     <el-button @click="prevPage">이전 페이지</el-button>
     <span class="ms-3 me-3 mt-2">{{pageNo}}</span>
@@ -106,9 +127,14 @@ li {
 
   .title{
     a{
+      width: 500px;
       font-size: 2.5rem;
       color: #383838;
       text-decoration: none;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     &:hover {
